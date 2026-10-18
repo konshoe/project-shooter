@@ -1,0 +1,25 @@
+# Godot 4 auto-generated files
+.godot/
+
+# Exported binaries (builds you create for distribution)
+*.apk
+*.aab
+*.ipa
+*.exe
+*.x86_64
+*.arm64
+*.dmg
+*.app
+*.pck
+*.zip
+
+# Import cache (auto-rebuilt by Godot)
+*.import
+
+# VS Code / editor settings (optional — remove these two lines if you use VS Code and want to share settings)
+.vscode/
+*.code-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
