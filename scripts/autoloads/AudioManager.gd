@@ -11,7 +11,7 @@ extends Node
 
 const SFX_DIR := "res://assets/audio/sfx/"
 const MUSIC_DIR := "res://assets/audio/music/"
-const SFX_KEYS: Array[String] = ["shoot", "enemy_death", "player_hit", "boss_death"]
+const SFX_KEYS: Array[String] = ["shoot", "enemy_death", "player_hit", "boss_death", "shield_hit"]
 const MUSIC_KEYS: Array[String] = ["gameplay"]
 
 ## Simultaneous SFX voices. Auto-fire plus explosions overlap, so one player isn't enough.

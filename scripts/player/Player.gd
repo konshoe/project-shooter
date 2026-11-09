@@ -105,6 +105,7 @@ func _take_hit() -> void:
 		# The shield absorbs the hit; the invincibility window stops one
 		# collision from eating several shields.
 		UpgradeManager.consume_shield()
+		AudioManager.play_sfx("shield_hit")
 		_invincible_time_left = invincibility_sec
 		return
 	AudioManager.play_sfx("player_hit")
