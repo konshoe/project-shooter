@@ -5,6 +5,9 @@ extends Node3D
 
 @onready var _player: Player = $Player
 @onready var _wave_spawner: WaveSpawner = $WaveSpawner
+@onready var _upgrade_picker: UpgradePicker = $UpgradePicker
+
+var _waves_completed := 0
 
 
 func _ready() -> void:
@@ -15,3 +18,13 @@ func _ready() -> void:
 	_player.bullet_pool = pool
 
 	_wave_spawner.level_complete.connect(func(): print("LEVEL COMPLETE"))
+	_wave_spawner.wave_complete.connect(_on_wave_complete)
+	_upgrade_picker.picker_closed.connect(_wave_spawner.advance_to_next_wave)
+
+
+func _on_wave_complete() -> void:
+	_waves_completed += 1
+	if _waves_completed % _upgrade_picker.waves_between_picks == 0 and not _wave_spawner.is_final_wave():
+		_upgrade_picker.show_picker()  # Advances via picker_closed.
+	else:
+		_wave_spawner.advance_to_next_wave()

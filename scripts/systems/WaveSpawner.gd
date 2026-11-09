@@ -101,9 +101,20 @@ func _begin_next_wave() -> void:
 	_spawn_next()
 
 
+## Emits wave_complete. Does not advance: whoever listens must call
+## advance_to_next_wave() when ready (e.g. after an upgrade pick).
 func _finish_wave() -> void:
 	wave_complete.emit()
-	_begin_next_wave.call_deferred()
+
+
+## True while the last wave in the list is the one in play.
+func is_final_wave() -> bool:
+	return _wave_index >= _waves.size() - 1
+
+
+## Starts the next wave, or emits level_complete after the last one.
+func advance_to_next_wave() -> void:
+	_begin_next_wave()
 
 
 func _load_config(path: String) -> void:

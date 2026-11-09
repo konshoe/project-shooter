@@ -38,6 +38,17 @@ func apply_upgrade(upgrade_id: String) -> void:
 	upgrade_applied.emit(upgrade_id)
 
 
+## Returns the pool definitions (Dictionaries) that can still be stacked.
+func get_available_upgrades() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for def: Dictionary in _pool.values():
+		var delta: float = def["delta"]
+		var cap: float = int(def["max_stacks"]) * delta
+		if _active.get(def["stat"], 0.0) < cap:
+			result.append(def)
+	return result
+
+
 ## Clears all active upgrades. Call at run start.
 func reset() -> void:
 	_active.clear()

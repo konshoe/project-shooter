@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/game/WaveSpawner.tscn" id="5_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="6_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/GameOver.tscn" id="7_game_over"]
+[ext_resource type="PackedScene" path="res://scenes/ui/UpgradePicker.tscn" id="8_picker"]
 
 [node name="GameWorld" type="Node3D" unique_id=14723199]
 script = ExtResource("1_world")
@@ -27,3 +28,5 @@ wave_config_paths = Array[String](["res://resources/waves/level01_wave01.json", 
 [node name="HUD" parent="." unique_id=1880676850 instance=ExtResource("6_hud")]
 
 [node name="GameOver" parent="." unique_id=156281804 instance=ExtResource("7_game_over")]
+
+[node name="UpgradePicker" parent="." instance=ExtResource("8_picker")]
