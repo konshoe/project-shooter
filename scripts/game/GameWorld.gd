@@ -68,8 +68,8 @@ func _on_level_complete() -> void:
 	_waves_completed = 0  # Reset so upgrade-picker timing restarts cleanly.
 
 	if _current_level_index >= _level_manifest.size():
-		# All levels complete — placeholder until a Victory scene exists.
-		print("VICTORY — all levels complete!")
+		# All levels complete.
+		GameState.trigger_win()
 		return
 
 	var level_data: Variant = _level_manifest[_current_level_index]

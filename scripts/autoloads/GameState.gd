@@ -6,6 +6,7 @@ extends Node
 signal score_changed(score: int)
 signal life_lost(lives: int)
 signal game_over
+signal game_won
 ## Emitted by reset(), so displays can refresh both score and lives.
 signal run_reset
 
@@ -27,6 +28,10 @@ func lose_life() -> void:
 	life_lost.emit(lives)
 	if lives == 0:
 		game_over.emit()
+
+
+func trigger_win() -> void:
+	game_won.emit()
 
 
 func reset() -> void:
