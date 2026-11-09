@@ -32,4 +32,5 @@ func lose_life() -> void:
 func reset() -> void:
 	score = 0
 	lives = STARTING_LIVES
+	UpgradeManager.reset()
 	run_reset.emit()

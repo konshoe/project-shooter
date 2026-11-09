@@ -1,0 +1,50 @@
+[
+  {
+    "id": "fire_rate_up",
+    "label": "Rapid Fire",
+    "description": "Increases fire rate by 25%.",
+    "stat": "fire_rate_multiplier",
+    "delta": 0.25,
+    "max_stacks": 3
+  },
+  {
+    "id": "bullet_speed_up",
+    "label": "Hypersonic",
+    "description": "Increases bullet speed by 30%.",
+    "stat": "bullet_speed_multiplier",
+    "delta": 0.30,
+    "max_stacks": 3
+  },
+  {
+    "id": "move_speed_up",
+    "label": "Afterburner",
+    "description": "Increases move speed by 20%.",
+    "stat": "move_speed_multiplier",
+    "delta": 0.20,
+    "max_stacks": 4
+  },
+  {
+    "id": "triple_shot",
+    "label": "Triple Shot",
+    "description": "Fire three bullets at once.",
+    "stat": "triple_shot_enabled",
+    "delta": 1,
+    "max_stacks": 1
+  },
+  {
+    "id": "shield",
+    "label": "Shield",
+    "description": "Absorbs one hit. Stacks up to 2.",
+    "stat": "shield_count",
+    "delta": 1,
+    "max_stacks": 2
+  },
+  {
+    "id": "score_bonus",
+    "label": "Score Rush",
+    "description": "Increases score earned by 50%.",
+    "stat": "score_multiplier",
+    "delta": 0.50,
+    "max_stacks": 3
+  }
+]
