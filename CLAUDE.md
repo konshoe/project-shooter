@@ -49,8 +49,7 @@ project-shooter/
 ├── scenes/
 │   ├── game/
 │   │   ├── GameWorld.tscn      ← root scene; loads Level + HUD
-│   │   ├── GameCamera.tscn     ← orthographic camera node
-│   │   └── PauseMenu.tscn
+│   │   └── GameCamera.tscn     ← orthographic camera node
 │   ├── player/
 │   │   ├── Player.tscn
 │   │   └── PlayerBullet.tscn
@@ -63,6 +62,7 @@ project-shooter/
 │   ├── ui/
 │   │   ├── HUD.tscn
 │   │   ├── MainMenu.tscn
+│   │   ├── PauseMenu.tscn
 │   │   ├── UpgradePicker.tscn
 │   │   └── GameOver.tscn
 │   └── levels/
