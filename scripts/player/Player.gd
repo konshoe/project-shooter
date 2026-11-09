@@ -108,20 +108,35 @@ func _take_hit() -> void:
 		# collision from eating several shields.
 		UpgradeManager.consume_shield()
 		AudioManager.play_sfx("shield_hit")
-		_invincible_time_left = invincibility_sec
+		_begin_invincibility()
 		return
 	AudioManager.play_sfx("player_hit")
 	GameState.lose_life()
+	_begin_invincibility()
+
+
+func _begin_invincibility() -> void:
 	_invincible_time_left = invincibility_sec
+	# Layer 1 is what enemy bullets (mask 1) collide with, so with it off they
+	# pass straight through the ship instead of being pushed aside.
+	set_collision_layer_value(1, false)
+
+
+func _end_invincibility() -> void:
+	_invincible_time_left = 0.0
+	set_collision_layer_value(1, true)
 
 
 func _update_invincibility(delta: float) -> void:
 	if _invincible_time_left <= 0.0:
 		return
 	_invincible_time_left -= delta
+	if _invincible_time_left > 0.0:
+		return
+	_end_invincibility()
 	# body_entered only fires when contact starts, so an enemy that is still
 	# touching the ship when invincibility ends has to be checked for here.
-	if _invincible_time_left <= 0.0 and _hurt_box.has_overlapping_bodies():
+	if _hurt_box.has_overlapping_bodies():
 		_take_hit()
 
 
