@@ -15,4 +15,5 @@ func _ready() -> void:
 
 func _on_play_pressed() -> void:
 	AudioManager.play_music("gameplay")
+	GameState.reset()
 	get_tree().change_scene_to_file(GAME_SCENE)
