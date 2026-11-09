@@ -1,0 +1,28 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/GameWorld.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://scenes/game/GameCamera.tscn" id="2_camera"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/player/BulletPool.tscn" id="4_pool"]
+[ext_resource type="PackedScene" path="res://scenes/game/WaveSpawner.tscn" id="5_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="6_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/GameOver.tscn" id="7_game_over"]
+
+[node name="GameWorld" type="Node3D"]
+script = ExtResource("1_world")
+bullet_pool = NodePath("BulletPool")
+
+[node name="GameCamera" parent="." instance=ExtResource("2_camera")]
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
+
+[node name="BulletPool" parent="." instance=ExtResource("4_pool")]
+
+[node name="WaveSpawner" parent="." instance=ExtResource("5_spawner")]
+
+[node name="HUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="GameOver" parent="." instance=ExtResource("7_game_over")]
