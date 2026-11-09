@@ -18,6 +18,7 @@ signal wave_complete
 const ENEMY_SCENES := {
 	"EnemyFighter": preload("res://scenes/enemies/EnemyFighter.tscn"),
 	"EnemyBomber": preload("res://scenes/enemies/EnemyBomber.tscn"),
+	"BossAlpha": preload("res://scenes/enemies/bosses/BossAlpha.tscn"),
 }
 ## Horizontal gap between neighbouring formation slots (viewport width fraction).
 const FORMATION_SPACING_X := 0.12

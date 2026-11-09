@@ -49,6 +49,7 @@ var _invincible_time_left := 0.0
 
 
 func _ready() -> void:
+	add_to_group("player")
 	_hurt_box.body_entered.connect(_on_hurtbox_body_entered)
 	# Deferred: a parent (e.g. GameWorld) assigns bullet_pool in its own _ready(),
 	# which runs after this one.

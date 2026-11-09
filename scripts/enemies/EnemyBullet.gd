@@ -16,21 +16,31 @@ extends CharacterBody3D
 ## How far below the bottom edge (in pixels) the bullet travels before it is freed.
 @export var offscreen_margin_px: float = 32.0
 
+## World-space flight direction. Leave at zero to fly straight down the screen.
+## Set before the bullet is added to the tree.
+var direction := Vector3.ZERO
+
 
 func _physics_process(delta: float) -> void:
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
 
+	# Angled shots can leave through the sides, so check those edges as well as the bottom.
 	var view_rect := get_viewport().get_visible_rect()
-	if camera.unproject_position(global_position).y > view_rect.end.y + offscreen_margin_px:
+	var screen_pos := camera.unproject_position(global_position)
+	if (
+		screen_pos.y > view_rect.end.y + offscreen_margin_px
+		or screen_pos.x < view_rect.position.x - offscreen_margin_px
+		or screen_pos.x > view_rect.end.x + offscreen_margin_px
+	):
 		queue_free()
 		return
 
 	# Orthographic camera: `size` is world units across the viewport's height.
 	var world_per_px := camera.size / view_rect.size.y
-	var screen_down := -camera.global_basis.y.normalized()
-	var hit := move_and_collide(screen_down * speed * world_per_px * delta)
+	var move_dir := direction if direction != Vector3.ZERO else -camera.global_basis.y.normalized()
+	var hit := move_and_collide(move_dir * speed * world_per_px * delta)
 	if hit != null:
 		var target := hit.get_collider()
 		if target != null and target.has_method("take_damage"):

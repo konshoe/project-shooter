@@ -1,5 +1,22 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/enemies/EnemyBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/enemies/bosses/BossAlpha.gd" id="2_boss"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_boss"]
+size = Vector3(1.2, 1.2, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_boss"]
+size = Vector3(1.2, 1.2, 1.2)
 
 [node name="BossAlpha" instance=ExtResource("1_base")]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_boss")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_boss")
+
+[node name="PlaceholderMesh" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("BoxMesh_boss")
