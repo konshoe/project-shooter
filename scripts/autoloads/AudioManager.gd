@@ -12,6 +12,11 @@ extends Node
 const SFX_DIR := "res://assets/audio/sfx/"
 const MUSIC_DIR := "res://assets/audio/music/"
 const SFX_KEYS: Array[String] = ["shoot", "enemy_death", "player_hit", "boss_death", "shield_hit"]
+## Per-key volume offset in dB for SFX that should be quieter (or louder) than
+## the rest. Keys not listed play at 0 dB.
+const SFX_VOLUME_DB := {
+	"shoot": -10.0,
+}
 const MUSIC_KEYS: Array[String] = ["gameplay"]
 
 ## Simultaneous SFX voices. Auto-fire plus explosions overlap, so one player isn't enough.
@@ -56,6 +61,8 @@ func play_sfx(key: String) -> void:
 	var player := _sfx_players[_next_sfx_voice]
 	_next_sfx_voice = (_next_sfx_voice + 1) % SFX_VOICES  # Round-robin; steals the oldest voice.
 	player.stream = stream
+	# Set every time: voices are shared round-robin, so a previous key's offset must not stick.
+	player.volume_db = SFX_VOLUME_DB.get(key, 0.0)
 	player.play()
 
 
