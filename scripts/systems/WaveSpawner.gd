@@ -12,6 +12,8 @@ extends Node3D
 
 ## Emitted once every enemy in the wave has been spawned and is dead or off-screen.
 signal wave_complete
+## Emitted after the last wave config in the list has completed.
+signal level_complete
 
 ## Maps the config's "type" string to its scene. Preloaded so nothing is loaded
 ## during gameplay. Add new enemy types here.
@@ -27,12 +29,19 @@ const FORMATION_SPACING_Y := 0.06
 ## Half-width of the "random" formation's spawn band (viewport width fraction).
 const RANDOM_HALF_WIDTH := 0.3
 
-## Path to the wave config JSON. Set per-level in the editor.
+## Ordered wave config JSONs for the level. Each starts when the previous completes.
+@export_file("*.json") var wave_config_paths: Array[String] = []
+## Deprecated: single-wave fallback, used only when wave_config_paths is empty.
 @export_file("*.json") var wave_config_path: String = "res://resources/waves/level01_wave01.json"
 ## Start the wave automatically when the scene loads.
 @export var autostart := true
 
-## Enemies created at load time but not yet spawned into the scene. Each entry:
+## Every wave's enemies, created at load time (one entry per config, in order).
+var _waves: Array = []
+var _wave_index := -1
+## Path of the config currently being parsed/played (for error messages).
+var _current_path := ""
+## Enemies of the current wave created at load time but not yet spawned. Each entry:
 ## { "enemy": EnemyBase, "screen_frac": Vector2, "delay_after": float }
 var _pending: Array[Dictionary] = []
 ## Enemies currently in play. Kept as a set (enemy -> true) rather than a bare
@@ -47,9 +56,16 @@ func _ready() -> void:
 	_spawn_timer.one_shot = true
 	_spawn_timer.timeout.connect(_spawn_next)
 
-	# Create the whole wave now, at scene load, so spawning during gameplay only
+	# Create every wave now, at scene load, so spawning during gameplay only
 	# adds existing nodes to the tree. No instantiate() during gameplay.
-	_load_config()
+	var paths: Array[String] = wave_config_paths
+	if paths.is_empty() and wave_config_path != "":
+		paths = [wave_config_path]
+	for path in paths:
+		_pending = []
+		_load_config(path)
+		_waves.append(_pending)
+	_pending = []
 
 	if autostart:
 		start_wave.call_deferred()
@@ -58,30 +74,47 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	# Enemies that never got spawned aren't in the tree, so free them ourselves.
 	if what == NOTIFICATION_PREDELETE:
-		for entry in _pending:
-			(entry["enemy"] as Node).free()
-		_pending.clear()
+		for wave: Array in _waves:
+			for entry: Dictionary in wave:
+				(entry["enemy"] as Node).free()
+		_waves.clear()
 
 
 func start_wave() -> void:
 	if _started:
 		return
 	_started = true
+	_begin_next_wave()
+
+
+func _begin_next_wave() -> void:
+	_wave_index += 1
+	if _wave_index >= _waves.size():
+		level_complete.emit()
+		return
+	_pending.assign(_waves[_wave_index])
+	_waves[_wave_index] = []  # Ownership passes to the spawn queue.
 	if _pending.is_empty():
 		# Nothing to spawn (bad or empty config) - don't leave the level hanging.
-		wave_complete.emit()
+		_finish_wave()
 		return
 	_spawn_next()
 
 
-func _load_config() -> void:
-	var file := FileAccess.open(wave_config_path, FileAccess.READ)
+func _finish_wave() -> void:
+	wave_complete.emit()
+	_begin_next_wave.call_deferred()
+
+
+func _load_config(path: String) -> void:
+	_current_path = path
+	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		push_error("WaveSpawner: cannot open wave config '%s' (error %d)." % [wave_config_path, FileAccess.get_open_error()])
+		push_error("WaveSpawner: cannot open wave config '%s' (error %d)." % [path, FileAccess.get_open_error()])
 		return
 	var config: Variant = JSON.parse_string(file.get_as_text())
 	if not config is Dictionary or not (config as Dictionary).get("enemies") is Array:
-		push_error("WaveSpawner: wave config '%s' is not valid (expected an object with an 'enemies' array)." % wave_config_path)
+		push_error("WaveSpawner: wave config '%s' is not valid (expected an object with an 'enemies' array)." % path)
 		return
 
 	for group: Variant in config["enemies"]:
@@ -92,7 +125,7 @@ func _load_config() -> void:
 func _queue_group(group: Dictionary) -> void:
 	var type: String = group.get("type", "")
 	if not ENEMY_SCENES.has(type):
-		push_error("WaveSpawner: unknown enemy type '%s' in '%s'." % [type, wave_config_path])
+		push_error("WaveSpawner: unknown enemy type '%s' in '%s'." % [type, _current_path])
 		return
 
 	var count: int = int(group.get("count", 1))
@@ -163,7 +196,7 @@ func _on_enemy_gone(enemy: EnemyBase) -> void:
 	if not _alive.erase(enemy):
 		return  # Already counted (e.g. left the screen and was hit in the same frame).
 	if _alive.is_empty() and _pending.is_empty():
-		wave_complete.emit()
+		_finish_wave()
 
 
 ## Projects a viewport-fraction position (0-1 on both axes) onto the gameplay plane.
