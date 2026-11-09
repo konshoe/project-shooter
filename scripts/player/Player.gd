@@ -18,7 +18,9 @@ extends CharacterBody3D
 
 @export_group("Movement")
 ## Base maximum ship speed, in viewport pixels per second (before upgrades).
-@export var max_speed_px: float = 2400.0
+## Kept low enough that the cap actually binds on big moves, so the
+## Afterburner upgrade is noticeable.
+@export var max_speed_px: float = 1200.0
 ## Base keyboard movement speed, in viewport pixels per second (before upgrades).
 @export var keyboard_speed_px: float = 700.0
 ## Minimum distance kept from the viewport's left, right and bottom edges, in pixels.

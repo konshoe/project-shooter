@@ -12,6 +12,7 @@ const LEVEL_MANIFEST_PATH := "res://resources/levels/level_manifest.json"
 @onready var _player: Player = $Player
 @onready var _wave_spawner: WaveSpawner = $WaveSpawner
 @onready var _upgrade_picker: UpgradePicker = $UpgradePicker
+@onready var _hud: HUD = $HUD
 
 ## Zero-based index of the level currently in play.
 ## Level 1 = 0, Level 2 = 1, etc.  Matches the manifest array index.
@@ -31,6 +32,7 @@ func _ready() -> void:
 	_load_manifest()
 
 	_wave_spawner.wave_complete.connect(_on_wave_complete)
+	_wave_spawner.wave_started.connect(_on_wave_started)
 	_wave_spawner.level_complete.connect(_on_level_complete)
 	_upgrade_picker.picker_closed.connect(_wave_spawner.advance_to_next_wave)
 
@@ -46,6 +48,10 @@ func _load_manifest() -> void:
 		_level_manifest = parsed
 	else:
 		push_error("GameWorld: level_manifest.json must be a JSON array.")
+
+
+func _on_wave_started(wave_number: int, wave_total: int) -> void:
+	_hud.set_progress(_current_level_index + 1, wave_number, wave_total)
 
 
 func _on_wave_complete() -> void:

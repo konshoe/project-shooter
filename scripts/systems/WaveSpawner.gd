@@ -12,6 +12,8 @@ extends Node3D
 
 ## Emitted once every enemy in the wave has been spawned and is dead or off-screen.
 signal wave_complete
+## Emitted when a wave begins. wave_number is 1-based.
+signal wave_started(wave_number: int, wave_total: int)
 ## Emitted after the last wave config in the list has completed.
 signal level_complete
 
@@ -92,6 +94,7 @@ func _begin_next_wave() -> void:
 	if _wave_index >= _waves.size():
 		level_complete.emit()
 		return
+	wave_started.emit(_wave_index + 1, _waves.size())
 	_pending.assign(_waves[_wave_index])
 	_waves[_wave_index] = []  # Ownership passes to the spawn queue.
 	if _pending.is_empty():
