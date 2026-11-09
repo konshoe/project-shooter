@@ -12,6 +12,7 @@ height = 0.8
 
 [node name="EnemyFighter" instance=ExtResource("1_base")]
 script = ExtResource("2_fighter")
+max_health = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_fighter")
