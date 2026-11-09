@@ -8,8 +8,6 @@ extends EnemyBase
 ## "speed" field. Movement is worked out in screen space and projected onto the
 ## gameplay plane, so it doesn't depend on the camera's orthographic size.
 
-const BULLET_SCENE: PackedScene = preload("res://scenes/enemies/EnemyBullet.tscn")
-
 ## Entry speed, in viewport pixels per second.
 @export var speed: float = 60.0
 ## The boss stops once its screen Y reaches this fraction of the viewport height.
@@ -77,7 +75,7 @@ func _attack() -> void:
 	_aimed_next = not _aimed_next
 
 
-## Three bullets: straight down, and 15 degrees to each side.
+## Three bullets: straight down, and spread_angle_deg to each side.
 func _fire_spread() -> void:
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:
@@ -101,12 +99,8 @@ func _fire_aimed() -> void:
 	_fire_bullet(to_player.normalized())
 
 
+## Fires one bullet in the given world-space direction via the enemy bullet pool.
 func _fire_bullet(direction: Vector3) -> void:
-	var parent := get_parent()
-	if parent == null:
+	if EnemyBulletPool.instance == null:
 		return
-	var bullet := BULLET_SCENE.instantiate() as EnemyBullet
-	bullet.speed = bullet_speed
-	bullet.direction = direction
-	parent.add_child(bullet)
-	bullet.global_position = global_position
+	EnemyBulletPool.instance.fire(global_position, direction, bullet_speed, 1)

@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="6_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/GameOver.tscn" id="7_game_over"]
 [ext_resource type="PackedScene" path="res://scenes/ui/UpgradePicker.tscn" id="8_picker"]
+[ext_resource type="Script" uid="uid://t0fxqv5pd5fs" path="res://scripts/systems/EnemyBulletPool.gd" id="9_enemy_pool"]
 
 [node name="GameWorld" type="Node3D" unique_id=14723199]
 script = ExtResource("1_world")
@@ -30,3 +31,6 @@ wave_config_paths = Array[String](["res://resources/waves/level01_wave01.json", 
 [node name="GameOver" parent="." unique_id=156281804 instance=ExtResource("7_game_over")]
 
 [node name="UpgradePicker" parent="." unique_id=1199727831 instance=ExtResource("8_picker")]
+
+[node name="EnemyBulletPool" type="Node" parent="." unique_id=1730466215]
+script = ExtResource("9_enemy_pool")

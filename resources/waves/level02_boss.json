@@ -1,0 +1,16 @@
+{
+  "wave_id": "level02_boss",
+  "enemies": [
+    {
+      "type": "BossAlpha",
+      "count": 1,
+      "formation": "line",
+      "spawn_x_center": 0.5,
+      "spawn_y": -0.05,
+      "speed": 80,
+      "delay_between": 0.0
+    }
+  ],
+  "duration_limit_sec": 120,
+  "is_boss_wave": true
+}

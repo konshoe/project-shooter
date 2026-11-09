@@ -1,0 +1,25 @@
+{
+  "wave_id": "level02_wave03",
+  "enemies": [
+    {
+      "type": "EnemyFighter",
+      "count": 4,
+      "formation": "V",
+      "spawn_x_center": 0.5,
+      "spawn_y": -0.05,
+      "speed": 180,
+      "delay_between": 0.3
+    },
+    {
+      "type": "EnemyBomber",
+      "count": 2,
+      "formation": "line",
+      "spawn_x_center": 0.5,
+      "spawn_y": -0.05,
+      "speed": 100,
+      "delay_between": 0.5
+    }
+  ],
+  "duration_limit_sec": 40,
+  "is_boss_wave": false
+}

@@ -117,6 +117,45 @@ func advance_to_next_wave() -> void:
 	_begin_next_wave()
 
 
+## Clears the current wave set and loads a new list of wave configs.
+## Frees every enemy that has not yet been spawned or is still alive on screen.
+## Called by GameWorld between levels; score and upgrades are managed elsewhere.
+func load_level(paths: Array[String]) -> void:
+	# Stop any pending spawn delay.
+	_spawn_timer.stop()
+
+	# Free enemies waiting in unfired waves.
+	for wave: Array in _waves:
+		for entry: Dictionary in wave:
+			(entry["enemy"] as Node).free()
+	_waves.clear()
+
+	# Free enemies pending in the active wave queue.
+	for entry: Dictionary in _pending:
+		(entry["enemy"] as Node).free()
+	_pending.clear()
+
+	# Remove live enemies from the tree. _on_enemy_gone will fire but _alive is
+	# already cleared below, so it returns early without double-counting.
+	for enemy: EnemyBase in _alive.keys():
+		enemy.queue_free()
+	_alive.clear()
+
+	# Reset sequencing state.
+	_wave_index = -1
+	_started = false
+	_current_path = ""
+
+	# Pre-instantiate all enemies for the new level (same logic as _ready).
+	for path in paths:
+		_pending = []
+		_load_config(path)
+		_waves.append(_pending)
+	_pending = []
+
+	start_wave.call_deferred()
+
+
 func _load_config(path: String) -> void:
 	_current_path = path
 	var file := FileAccess.open(path, FileAccess.READ)

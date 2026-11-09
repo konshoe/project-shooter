@@ -1,0 +1,20 @@
+[
+  {
+    "id": "level01",
+    "waves": [
+      "res://resources/waves/level01_wave01.json",
+      "res://resources/waves/level01_wave02.json",
+      "res://resources/waves/level01_wave03.json",
+      "res://resources/waves/level01_boss.json"
+    ]
+  },
+  {
+    "id": "level02",
+    "waves": [
+      "res://resources/waves/level02_wave01.json",
+      "res://resources/waves/level02_wave02.json",
+      "res://resources/waves/level02_wave03.json",
+      "res://resources/waves/level02_boss.json"
+    ]
+  }
+]

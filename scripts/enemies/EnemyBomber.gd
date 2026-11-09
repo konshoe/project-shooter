@@ -1,7 +1,6 @@
 class_name EnemyBomber
 extends EnemyBase
 ## Tougher enemy that flies down the screen in a left-right sine-wave zigzag.
-## No firing yet (Phase 2d).
 ##
 ## Speed is in viewport pixels per second, the same unit as the wave config
 ## "speed" field. Movement is worked out in screen space and projected onto the
@@ -19,8 +18,6 @@ extends EnemyBase
 @export var score_value: int = 30
 ## Seconds between shots, counted from the moment the bomber is fully on screen.
 @export var fire_interval: float = 2.0
-
-const BULLET_SCENE: PackedScene = preload("res://scenes/enemies/EnemyBullet.tscn")
 
 var _fire_timer: Timer
 
@@ -81,11 +78,9 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-## Fires one bullet straight down the screen from the bomber's position.
+## Fires one bullet straight down the screen from the bomber's current position.
 func _fire() -> void:
-	var parent := get_parent()
-	if parent == null:
+	if EnemyBulletPool.instance == null:
 		return
-	var bullet := BULLET_SCENE.instantiate() as EnemyBullet
-	parent.add_child(bullet)
-	bullet.global_position = global_position
+	# direction = Vector3.ZERO tells EnemyBullet to fly straight down the screen.
+	EnemyBulletPool.instance.fire(global_position, Vector3.ZERO, 200.0, 1)
