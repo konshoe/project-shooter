@@ -48,12 +48,19 @@ func _physics_process(delta: float) -> void:
 	# Orthographic camera: `size` is world units across the viewport's height.
 	var world_per_px := camera.size / view_rect.size.y
 	var move_dir := direction if direction != Vector3.ZERO else -camera.global_basis.y.normalized()
-	var hit := move_and_collide(move_dir * speed * world_per_px * delta)
-	if hit != null:
-		var target := hit.get_collider()
-		if target != null and target.has_method("take_damage"):
-			target.take_damage(damage)
-		return_to_pool()
+	var motion := move_dir * speed * world_per_px * delta
+
+	# test_only: detect a hit without moving, so physics can never push the
+	# bullet out of an overlap (that was deflecting bullets sideways).
+	var collision := move_and_collide(motion, true)
+	if collision == null:
+		global_position += motion  # No hit: keep moving.
+		return
+
+	var target := collision.get_collider()
+	if target != null and target.has_method("take_damage"):
+		target.take_damage(damage)
+	return_to_pool()
 
 
 ## Activate this bullet from the pool. Called by EnemyBulletPool.fire().

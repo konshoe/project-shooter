@@ -14,6 +14,8 @@ extends CharacterBody3D
 ## Pointer input is read in _unhandled_input, so full-screen HUD Controls should
 ## use MOUSE_FILTER_IGNORE or they will swallow the drag/mouse events.
 
+const FLASH_INTERVAL := 0.1
+
 @export var bullet_pool: BulletPool
 
 @export_group("Movement")
@@ -50,6 +52,7 @@ var _invincible_time_left := 0.0
 ## Detects enemies touching the ship (mask: layer 3, Enemy). It sits on no
 ## layer itself, and the ship's own body still collides with nothing.
 @onready var _hurt_box: Area3D = $HurtBox
+@onready var _mesh: MeshInstance3D = $PlaceholderMesh
 
 
 func _ready() -> void:
@@ -125,6 +128,7 @@ func _begin_invincibility() -> void:
 func _end_invincibility() -> void:
 	_invincible_time_left = 0.0
 	set_collision_layer_value(1, true)
+	_mesh.visible = true
 
 
 func _update_invincibility(delta: float) -> void:
@@ -132,6 +136,9 @@ func _update_invincibility(delta: float) -> void:
 		return
 	_invincible_time_left -= delta
 	if _invincible_time_left > 0.0:
+		# Visible 0.1s, hidden 0.1s, ... counted from the hit.
+		var elapsed := invincibility_sec - _invincible_time_left
+		_mesh.visible = int(elapsed / FLASH_INTERVAL) % 2 == 0
 		return
 	_end_invincibility()
 	# body_entered only fires when contact starts, so an enemy that is still
