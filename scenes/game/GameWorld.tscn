@@ -22,6 +22,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
 [node name="BulletPool" parent="." unique_id=1405546687 instance=ExtResource("4_pool")]
 
 [node name="WaveSpawner" parent="." unique_id=1906818275 instance=ExtResource("5_spawner")]
+wave_config_paths = Array[String](["res://resources/waves/level01_wave01.json", "res://resources/waves/level01_wave02.json", "res://resources/waves/level01_wave03.json", "res://resources/waves/level01_boss.json"])
 
 [node name="HUD" parent="." unique_id=1880676850 instance=ExtResource("6_hud")]
 
