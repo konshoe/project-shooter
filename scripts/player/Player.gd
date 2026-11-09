@@ -107,6 +107,7 @@ func _take_hit() -> void:
 		UpgradeManager.consume_shield()
 		_invincible_time_left = invincibility_sec
 		return
+	AudioManager.play_sfx("player_hit")
 	GameState.lose_life()
 	_invincible_time_left = invincibility_sec
 
@@ -159,6 +160,7 @@ func _update_firing(camera: Camera3D, delta: float) -> void:
 
 	if bullet_pool == null:
 		return
+	AudioManager.play_sfx("shoot")
 	var speed := bullet_speed * (1.0 + UpgradeManager.get_stat("bullet_speed_multiplier", 0.0))
 	var screen_up := camera.global_basis.y.normalized()
 	var muzzle := global_position + screen_up * muzzle_offset

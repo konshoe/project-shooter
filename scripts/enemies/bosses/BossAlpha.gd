@@ -30,6 +30,7 @@ var _attack_timer: Timer
 func _ready() -> void:
 	max_health = 20
 	super()  # EnemyBase._ready() sets health; Godot 4 doesn't call it automatically.
+	death_sfx = "boss_death"
 	died.connect(GameState.add_score.bind(score_value))
 
 	_attack_timer = Timer.new()

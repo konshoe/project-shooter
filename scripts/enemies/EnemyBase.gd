@@ -15,6 +15,9 @@ signal left_screen
 
 @export var max_health: int = 3
 
+## SFX key played on death (see AudioManager). Subclasses can override it.
+var death_sfx: String = "enemy_death"
+
 var health: int
 
 
@@ -28,5 +31,6 @@ func take_damage(amount: int) -> void:
 		return
 	health -= amount
 	if health <= 0:
+		AudioManager.play_sfx(death_sfx)
 		died.emit()
 		queue_free()

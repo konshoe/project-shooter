@@ -21,6 +21,7 @@ var _level_manifest: Array = []
 
 
 func _ready() -> void:
+	AudioManager.play_music("gameplay")
 	var pool := get_node_or_null(bullet_pool) as BulletPool
 	if pool == null:
 		push_error("GameWorld: bullet_pool path doesn't point to a BulletPool node.")
