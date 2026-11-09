@@ -29,4 +29,4 @@ wave_config_paths = Array[String](["res://resources/waves/level01_wave01.json", 
 
 [node name="GameOver" parent="." unique_id=156281804 instance=ExtResource("7_game_over")]
 
-[node name="UpgradePicker" parent="." instance=ExtResource("8_picker")]
+[node name="UpgradePicker" parent="." unique_id=1199727831 instance=ExtResource("8_picker")]
