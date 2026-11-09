@@ -17,9 +17,9 @@ extends CharacterBody3D
 @export var bullet_pool: BulletPool
 
 @export_group("Movement")
-## Maximum ship speed, in viewport pixels per second.
+## Base maximum ship speed, in viewport pixels per second (before upgrades).
 @export var max_speed_px: float = 2400.0
-## Keyboard movement speed, in viewport pixels per second.
+## Base keyboard movement speed, in viewport pixels per second (before upgrades).
 @export var keyboard_speed_px: float = 700.0
 ## Minimum distance kept from the viewport's left, right and bottom edges, in pixels.
 @export var edge_margin_px: float = 32.0
@@ -27,10 +27,12 @@ extends CharacterBody3D
 @export_range(0.0, 1.0) var play_zone_top: float = 2.0 / 3.0
 
 @export_group("Firing")
-## Seconds between automatic shots.
+## Base seconds between automatic shots (before upgrades).
 @export var fire_interval: float = 0.2
-## Bullet speed in world units per second (passed straight to BulletPool.fire).
+## Base bullet speed in world units per second (before upgrades).
 @export var bullet_speed: float = 20.0
+## Angle between the centre bullet and each side bullet of Triple Shot, in degrees.
+@export var triple_shot_angle_deg: float = 15.0
 ## How far ahead of the ship (toward the top of the screen) bullets spawn, in world units.
 @export var muzzle_offset: float = 0.6
 
@@ -99,6 +101,12 @@ func take_damage(_amount: int) -> void:
 func _take_hit() -> void:
 	if _invincible_time_left > 0.0:
 		return
+	if UpgradeManager.get_stat("shield_count", 0.0) > 0.0:
+		# The shield absorbs the hit; the invincibility window stops one
+		# collision from eating several shields.
+		UpgradeManager.consume_shield()
+		_invincible_time_left = invincibility_sec
+		return
 	GameState.lose_life()
 	_invincible_time_left = invincibility_sec
 
@@ -122,16 +130,17 @@ func _update_movement(camera: Camera3D, delta: float) -> void:
 	var screen_pos := camera.unproject_position(global_position)
 	var target := screen_pos
 
+	var move_mult := 1.0 + UpgradeManager.get_stat("move_speed_multiplier", 0.0)
 	var key_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if key_dir != Vector2.ZERO:
 		# Keyboard takes over until the pointer moves again.
 		_has_pointer_target = false
-		target = screen_pos + key_dir * keyboard_speed_px * delta
+		target = screen_pos + key_dir * keyboard_speed_px * move_mult * delta
 	elif _has_pointer_target:
 		target = _pointer_target
 
 	target = _clamp_to_play_zone(target)
-	var step := (target - screen_pos).limit_length(max_speed_px * delta)
+	var step := (target - screen_pos).limit_length(max_speed_px * move_mult * delta)
 
 	var world_target: Variant = _screen_to_plane(camera, screen_pos + step)
 	if world_target == null:
@@ -145,12 +154,21 @@ func _update_firing(camera: Camera3D, delta: float) -> void:
 	if _fire_cooldown > 0.0:
 		return
 	# Carry the leftover time so the average rate stays at fire_interval.
-	_fire_cooldown = maxf(_fire_cooldown + fire_interval, 0.0)
+	var interval := fire_interval / (1.0 + UpgradeManager.get_stat("fire_rate_multiplier", 0.0))
+	_fire_cooldown = maxf(_fire_cooldown + interval, 0.0)
 
 	if bullet_pool == null:
 		return
+	var speed := bullet_speed * (1.0 + UpgradeManager.get_stat("bullet_speed_multiplier", 0.0))
 	var screen_up := camera.global_basis.y.normalized()
-	bullet_pool.fire(global_position + screen_up * muzzle_offset, screen_up, bullet_speed)
+	var muzzle := global_position + screen_up * muzzle_offset
+	bullet_pool.fire(muzzle, screen_up, speed)
+	if UpgradeManager.get_stat("triple_shot_enabled", 0.0) > 0.0:
+		# Rotate about the plane normal so the side shots stay on the gameplay plane.
+		var axis := camera.global_basis.z.normalized()
+		var angle := deg_to_rad(triple_shot_angle_deg)
+		bullet_pool.fire(muzzle, screen_up.rotated(axis, angle), speed)
+		bullet_pool.fire(muzzle, screen_up.rotated(axis, -angle), speed)
 
 
 func _clamp_to_play_zone(screen_pos: Vector2) -> Vector2:

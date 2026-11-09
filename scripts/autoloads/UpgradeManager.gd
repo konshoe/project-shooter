@@ -49,6 +49,12 @@ func get_available_upgrades() -> Array[Dictionary]:
 	return result
 
 
+## Uses up one shield charge (never below zero).
+func consume_shield() -> void:
+	var current: float = _active.get("shield_count", 0.0)
+	_active["shield_count"] = maxf(0.0, current - 1.0)
+
+
 ## Clears all active upgrades. Call at run start.
 func reset() -> void:
 	_active.clear()

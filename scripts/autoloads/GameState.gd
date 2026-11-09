@@ -16,7 +16,7 @@ var lives: int = STARTING_LIVES
 
 
 func add_score(points: int) -> void:
-	score += points
+	score += int(points * (1.0 + UpgradeManager.get_stat("score_multiplier", 0.0)))
 	score_changed.emit(score)
 
 
