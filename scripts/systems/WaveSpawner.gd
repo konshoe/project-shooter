@@ -128,7 +128,7 @@ func _formation_slot(formation: String, i: int, count: int, center_x: float, spa
 			var col_offset := float(i % cols) - float(cols - 1) / 2.0
 			return Vector2(
 				center_x + col_offset * FORMATION_SPACING_X,
-				spawn_y - float(i / cols) * FORMATION_SPACING_Y
+				spawn_y - floorf(i / float(cols)) * FORMATION_SPACING_Y
 			)
 		"random":
 			return Vector2(center_x + randf_range(-RANDOM_HALF_WIDTH, RANDOM_HALF_WIDTH), spawn_y)

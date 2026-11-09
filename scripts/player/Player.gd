@@ -89,6 +89,12 @@ func _on_hurtbox_body_entered(body: Node3D) -> void:
 		body.take_damage(999)
 
 
+## Called by enemy bullets. Each hit costs one life, whatever [param _amount] is,
+## and the invincibility window applies as it does for ramming.
+func take_damage(_amount: int) -> void:
+	_take_hit()
+
+
 func _take_hit() -> void:
 	if _invincible_time_left > 0.0:
 		return
